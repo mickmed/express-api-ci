@@ -29,7 +29,7 @@ Copy this entire code snippet and paste it into your terminal and hit return:
 
 ```sh
 npm init -y && 
-npm install sequelize pg dotenv express body-parser morgan && 
+npm install sequelize pg dotenv express body-parser morgan faker && 
 npm install --save-dev nodemon jest supertest cross-env sequelize-cli && 
 npx sequelize-cli init &&
 echo "
@@ -42,7 +42,7 @@ echo "
 .DS_Store
 .env" >> .gitignore &&
 mkdir routes controllers tests &&
-touch server.js  routes/index.js controllers/index.js tests/base.test.js &&
+touch server.js  routes/index.js controllers/index.js tests/{base.test.js,routes.test.js} &&
 code .
 ```
 
@@ -85,7 +85,7 @@ Create your database, a User model, and run the migration:
 
 ```sh
 npx sequelize-cli db:create
-npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string,password:string
+npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string,userName:string,password:string,jobTitle:string
 npx sequelize-cli db:migrate
 ```
 
@@ -98,32 +98,24 @@ npx sequelize-cli seed:generate --name users
 Edit the seed file:
 
 ```js
+const faker = require('faker');
+
+const users = [...Array(100)].map((user) => (
+  {
+    firstName: faker.name.firstName(),
+    lastName: faker.name.lastName(),
+    email: faker.internet.email(),
+    userName: faker.internet.userName(),
+    password: faker.internet.password(8),
+    jobTitle: faker.name.jobTitle(),
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
+))
+
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.bulkInsert('Users', [{
-      firstName: 'Bruno',
-      lastName: 'Doe',
-      email: 'john@doe.com',
-      password: '123456789',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      firstName: 'Emre',
-      lastName: 'Smith',
-      email: 'john@smith.com',
-      password: '123456789',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    },
-    {
-      firstName: 'John',
-      lastName: 'Stone',
-      email: 'john@stone.com',
-      password: '123456789',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }], {});
+    return queryInterface.bulkInsert('Users', users, {});
   },
 
   down: (queryInterface, Sequelize) => {
@@ -202,4 +194,276 @@ Let's create a seed for projects:
 ```sh
 npx sequelize-cli seed:generate --name projects
 ```
+
+We will be using the faker package:
+
+seeders/20190915023333-projects.js
+```js
+const faker = require('faker');
+
+const projects = [...Array(500)].map((project) => (
+  {
+    title: faker.commerce.productName(),
+    imageUrl: faker.image.business(),
+    description: faker.lorem.paragraph(),
+    githubUrl: faker.internet.url(),
+    deployedUrl: faker.internet.url(),
+    userId: Math.floor(Math.random() * 100) + 1,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
+))
+
+module.exports = {
+  up: (queryInterface, Sequelize) => {
+    return queryInterface.bulkInsert('Projects', projects, {});
+  },
+
+  down: (queryInterface, Sequelize) => {
+    return queryInterface.bulkDelete('Projects', null, {});
+  }
+};
+```
+
+Run the seed file, replace the timestamp below with your timestamp:
+
+```sh
+npx sequelize-cli db:seed --seed 20190915023333-projects.js
+```
+
+Make sure the data came through on [Postico](https://eggerapps.at/postico).
+
+Modify your package.json:
+
+```js
+  "scripts": {
+    "test": "cross-env NODE_ENV=test jest --testTimeout=10000",
+    "pretest": "cross-env NODE_ENV=test npm run db:reset",
+    "db:create:test": "cross-env NODE_ENV=test npx sequelize-cli db:create",
+    "start": "nodemon server.js",
+    "db:reset": "npx sequelize-cli db:drop && npx sequelize-cli db:create && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
+  }
+```
+
+Create your routes:
+
+routes/index.js
+```js
+const { Router } = require('express');
+const controllers = require('../controllers')
+const router = Router();
+
+router.get('/', (req, res) => res.send('This is root!'))
+
+router.post('/users', controllers.createUser)
+router.get('/users', controllers.getAllUsers)
+router.get('/users/:id', controllers.getUserById)
+router.put('/users/:id', controllers.updateUser)
+router.delete('/users/:id', controllers.deleteUser)
+
+module.exports = router;
+```
+
+Create your server.js
+
+```js
+const express = require('express');
+const bodyParser = require('body-parser');
+const logger = require('morgan');
+
+const routes = require('./routes');
+
+const PORT = process.env.PORT || 3000;
+
+const app = express();
+app.use(bodyParser.json())
+app.use(logger('dev'))
+
+app.use('/api', routes);
+
+app.listen(PORT, () => console.log(`Listening on port: ${PORT}`))
+
+module.exports = app
+```
+
+Create the controllers:
+
+controllers/index.js
+```js
+const { User, Item } = require('../models');
+
+const createUser = async (req, res) => {
+    try {
+        const user = await User.create(req.body);
+        return res.status(201).json({
+            user,
+        });
+    } catch (error) {
+        return res.status(500).json({ error: error.message })
+    }
+}
+
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.findAll({
+            include: [
+                {
+                    model: Item
+                }
+            ]
+        });
+        return res.status(200).json({ users });
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+const getUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findOne({
+            where: { id: id },
+            include: [
+                {
+                    model: Item
+                }
+            ]
+        });
+        if (user) {
+            return res.status(200).json({ user });
+        }
+        return res.status(404).send('User with the specified ID does not exists');
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+}
+
+const updateUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [updated] = await User.update(req.body, {
+            where: { id: id }
+        });
+        if (updated) {
+            const updatedUser = await User.findOne({ where: { id: id } });
+            return res.status(200).json({ user: updatedUser });
+        }
+        throw new Error('User not found');
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+};
+
+const deleteUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deleted = await User.destroy({
+            where: { id: id }
+        });
+        if (deleted) {
+            return res.status(200).send("User deleted");
+        }
+        throw new Error("User not found");
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+};
+
+module.exports = {
+    createUser,
+    getAllUsers,
+    getUserById,
+    updateUser,
+    deleteUser
+}
+```
+
+Run the server:
+
+```sh
+npm start
+```
+
+Create your base test:
+
+tests/base.test.js
+```js
+describe('Initial Test', () => {
+    it('should test that 1 + 1 === 2', () => {
+        expect(1 + 1).toBe(2)
+    })
+})
+```
+
+And finally our routes tests:
+
+tests/routes.test.js
+```js
+const request = require('supertest')
+const app = require('../server.js')
+describe('User API', () => {
+    it('should show all users', async () => {
+        const res = await request(app).get('/api/users')
+        expect(res.statusCode).toEqual(200)
+        expect(res.body).toHaveProperty('users')
+    }),
+        it('should show a user', async () => {
+            const res = await request(app).get('/api/users/3')
+            expect(res.statusCode).toEqual(200)
+            expect(res.body).toHaveProperty('user')
+        }),
+        it('should create a new user', async () => {
+            const res = await request(app)
+                .post('/api/users')
+                .send({
+                    firstName: 'Bob',
+                    lastName: 'Doe',
+                    email: 'bob@doe.com',
+                    password: '12345678'
+                })
+            expect(res.statusCode).toEqual(201)
+            expect(res.body).toHaveProperty('user')
+        }),
+        it('should update a user', async () => {
+            const res = await request(app)
+                .put('/api/users/3')
+                .send({
+                    firstName: 'Bob',
+                    lastName: 'Smith',
+                    email: 'bob@doe.com',
+                    password: 'abc123'
+                })
+            expect(res.statusCode).toEqual(200)
+            expect(res.body).toHaveProperty('user')
+        }),
+        it('should delete a user', async () => {
+            const res = await request(app)
+                .del('/api/users/3')
+                .send({
+                    firstName: 'Bob',
+                    lastName: 'Smith',
+                    email: 'bob@doe.com',
+                    password: 'abc123'
+                })
+            expect(res.statusCode).toEqual(200)
+            expect(res.text).toEqual("User deleted")
+        })
+})
+```
+
+Test it!
+
+```sh
+npm test
+```
+
+## Continuous Integration
+
+
 
