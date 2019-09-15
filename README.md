@@ -296,7 +296,7 @@ Create the controllers:
 
 controllers/index.js
 ```js
-const { User, Item } = require('../models');
+const { User, Project } = require('../models');
 
 const createUser = async (req, res) => {
     try {
@@ -314,7 +314,7 @@ const getAllUsers = async (req, res) => {
         const users = await User.findAll({
             include: [
                 {
-                    model: Item
+                    model: Project
                 }
             ]
         });
@@ -331,7 +331,7 @@ const getUserById = async (req, res) => {
             where: { id: id },
             include: [
                 {
-                    model: Item
+                    model: Project
                 }
             ]
         });
