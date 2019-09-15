@@ -473,3 +473,36 @@ Make sure you have pushed all changes up to GitHub.
 
 Once you've created an account with Travis CI, add your repo.
 
+Activate your repo.
+
+```sh
+touch .travis.yml
+```
+
+```yml
+language: node_js
+node_js:
+  - 'stable'
+install: npm install
+services:
+  - postgresql
+before_script:
+  - npm run db:create:test
+script: npm test
+after_success: npm run coverage
+```
+
+Setting up [Coveralls](https://coveralls.io):
+
+```sh
+touch .coveralls.yml
+```
+Go to the coveralls website. Signup. Add your repo. Click on your repo inside the coveralls website. Copy the repo_token. Paste it inside of .coveralls.yml
+
+Scroll to the bottom of the coveralls website on your repo page, copy the markdown for the coveralls badge. Paste on line 1 of your readme.
+
+Push changes up. It should kick off Travis CI.
+
+Check for success.
+
+Success!
