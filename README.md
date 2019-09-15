@@ -2,8 +2,9 @@
 
 ## Getting started
 
-1. Fork
-1. Clone
+1. Create a repo on GitHub.com called express-api-ci.
+2. Clone it down and follow the instructions on this readme.
+3. Your repo needs to be public and on GitHub.com so [Travis CI](https://travis-ci.org) can read it.
 
 # Express API - Continuous Integration
 
@@ -17,9 +18,10 @@ What is Continuous Integration? Let's take 10min to read:
 
 We are going to hit the ground running with this lesson. Up until this point you have created an express json api full crud (even a bit of unit testing). So let's skip the basics and dive right in!
 
-Make sure you're inside the repo:
+Make sure you're inside the GitHub.com repo you created:
 
 ```sh
+git clone https://github.com/yourusername/express-api-ci
 cd express-api-ci
 ```
 
