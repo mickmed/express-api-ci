@@ -465,5 +465,9 @@ npm test
 
 ## Continuous Integration
 
+Create an account at [Travis CI](https://travis-ci.org).
 
+Make sure you have pushed all changes up to GitHub.
+
+Once you've created an account with Travis CI, add your repo.
 
