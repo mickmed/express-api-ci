@@ -542,6 +542,6 @@ Finally, you can now push changes up and it will kick off a Travis CI build.
 
 Check for a successful build. You will also see your Coveralls badge in your README.md updated.
 
-![](coveralls-status.jpg)
+![](coveralls-status.png)
 
 Success!
