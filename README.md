@@ -545,3 +545,7 @@ Check for a successful build. You will also see your Coveralls badge in your REA
 ![](coveralls-status.png)
 
 Success!
+
+## Feedback
+
+> [Take a minute to give us feedback on this lesson so we can improve it!](https://forms.gle/vgUoXbzxPWf4oPCX6)
