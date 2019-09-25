@@ -477,17 +477,25 @@ npm test
 
 ## Continuous Integration
 
-Create an account at [Travis CI](https://travis-ci.org).
+We will now setup Continuous Integration (CI). The idea is that anytime we push changes to GitHub, it will kickoff a build of our project on Travis CI with the latest changes. Travis CI will run our tests and either pass or fail the tests. Additionally, we will integrate [Coveralls](https://coveralls.io) to check test coverage on our codebase - the idea is that all new features we push up to GitHub should be paired with a Unit Test.
 
-Make sure you have pushed all changes up to GitHub.
+Ok enough words, let's start by integrating [Travis CI](https://travis-ci.org).
 
-Once you've created an account with Travis CI, add your repo.
+1. First you will need to signup at [Travis CI](https://travis-ci.org).
 
-Activate your repo.
+2. Make sure you have pushed all changes up to GitHub.
+
+3. Once you've created an account with Travis CI, add your repo.
+
+4. Activate your repo.
+
+Now we need to setup the [Travis CI](https://travis-ci.org) config file:
 
 ```sh
 touch .travis.yml
 ```
+
+Add the following to .travis.yml:
 
 ```yml
 language: node_js
@@ -502,17 +510,24 @@ script: npm test
 after_success: npm run coverage
 ```
 
-Setting up [Coveralls](https://coveralls.io):
+> This tells [Travis CI](https://travis-ci.org) what to do. You can see in this config that we're telling [Travis CI](https://travis-ci.org) to runs tests, if the test succeed, then run [Coveralls](https://coveralls.io)
+
+Before we can run [Travis CI](https://travis-ci.org) we need to setup [Coveralls](https://coveralls.io) so let's do that:
 
 ```sh
 touch .coveralls.yml
 ```
-Go to the coveralls website. Signup. Add your repo. Click on your repo inside the coveralls website. Copy the repo_token. Paste it inside of .coveralls.yml
 
-Scroll to the bottom of the coveralls website on your repo page, copy the markdown for the coveralls badge. Paste on line 1 of your readme.
+1. Go to the [Coveralls](https://coveralls.io) website and sign up.
 
-Push changes up. It should kick off Travis CI.
+2. Add your repo. 
 
-Check for success.
+3. Click on your repo inside the coveralls website. Copy the repo_token. Paste it inside of .coveralls.yml
+
+4. Scroll to the bottom of the coveralls website on your repo page, copy the markdown for the coveralls badge. Paste on line 1 of your readme.
+
+Finally, you can now push changes up and it will kick off a Travis CI build.
+
+Check for a successful build.
 
 Success!
