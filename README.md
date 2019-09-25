@@ -477,6 +477,8 @@ npm test
 
 ## Continuous Integration
 
+![](travis-ci.png)
+
 We will now setup Continuous Integration (CI). The idea is that anytime we push changes to GitHub, it will kickoff a build of our project on Travis CI with the latest changes. Travis CI will run our tests and either pass or fail the tests. Additionally, we will integrate [Coveralls](https://coveralls.io) to check test coverage on our codebase - the idea is that all new features we push up to GitHub should be paired with a Unit Test.
 
 Ok enough words, let's start by integrating [Travis CI](https://travis-ci.org).
