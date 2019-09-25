@@ -481,6 +481,8 @@ We will now setup Continuous Integration (CI). The idea is that anytime we push 
 
 Ok enough words, let's start by integrating [Travis CI](https://travis-ci.org).
 
+### Travis CI
+
 ##
 
 ![](travis-ci.png)
@@ -517,6 +519,8 @@ after_success: npm run coverage
 ```
 
 > This tells [Travis CI](https://travis-ci.org) what to do. You can see in this config that we're telling [Travis CI](https://travis-ci.org) to runs tests, if the test succeed, then run [Coveralls](https://coveralls.io)
+
+### Coveralls
 
 ##
 
