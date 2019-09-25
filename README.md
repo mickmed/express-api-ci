@@ -514,6 +514,8 @@ after_success: npm run coverage
 
 > This tells [Travis CI](https://travis-ci.org) what to do. You can see in this config that we're telling [Travis CI](https://travis-ci.org) to runs tests, if the test succeed, then run [Coveralls](https://coveralls.io)
 
+![](coveralls.jpg)
+
 Before we can run [Travis CI](https://travis-ci.org) we need to setup [Coveralls](https://coveralls.io) so let's do that:
 
 ```sh
