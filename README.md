@@ -483,8 +483,6 @@ Ok enough words, let's start by integrating [Travis CI](https://travis-ci.org).
 
 ### Integrating Travis CI
 
-##
-
 ![](travis-ci.png)
 
 ##
@@ -521,8 +519,6 @@ after_success: npm run coverage
 > This tells [Travis CI](https://travis-ci.org) what to do. You can see in this config that we're telling [Travis CI](https://travis-ci.org) to runs tests, if the test succeed, then run [Coveralls](https://coveralls.io)
 
 ### Integrating Coveralls
-
-##
 
 ![](coveralls.jpg)
 
