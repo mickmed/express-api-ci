@@ -493,9 +493,13 @@ Ok enough words, let's start by integrating [Travis CI](https://travis-ci.org).
 
 Now we need to setup the [Travis CI](https://travis-ci.org) config file:
 
+##
+
 ```sh
 touch .travis.yml
 ```
+
+##
 
 Add the following to .travis.yml:
 
@@ -514,7 +518,11 @@ after_success: npm run coverage
 
 > This tells [Travis CI](https://travis-ci.org) what to do. You can see in this config that we're telling [Travis CI](https://travis-ci.org) to runs tests, if the test succeed, then run [Coveralls](https://coveralls.io)
 
+##
+
 ![](coveralls.jpg)
+
+##
 
 Before we can run [Travis CI](https://travis-ci.org) we need to setup [Coveralls](https://coveralls.io) so let's do that:
 
