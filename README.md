@@ -272,26 +272,36 @@ router.delete('/users/:id', controllers.deleteUser)
 module.exports = router;
 ```
 
-Create your server.js
+We will be creating an app.js which will hold our backend application logic and a server.js file which will create an instantiation of our backend application.
+
+First let's create app.js
 
 ```js
 const express = require('express');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
-
 const routes = require('./routes');
 
-const PORT = process.env.PORT || 3000;
-
 const app = express();
+
 app.use(bodyParser.json())
 app.use(logger('dev'))
 
 app.use('/api', routes);
 
+module.exports = app
+```
+
+Next let's create server.js
+
+```js
+const app = require('./app.js');
+
+const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => console.log(`Listening on port: ${PORT}`))
 
-module.exports = app
+module.exports = server
 ```
 
 Create the controllers:
