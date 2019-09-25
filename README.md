@@ -544,6 +544,8 @@ Check for a successful build.
 
 ![](travisci-pass.png)
 
+##
+
 You will also see your Coveralls badge in your README.md updated.
 
 ![](coveralls-status.png)
