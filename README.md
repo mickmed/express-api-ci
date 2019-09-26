@@ -31,14 +31,9 @@ Copy this entire code snippet and paste it into your terminal and hit return:
 
 ```sh
 npm init -y && 
-npm install sequelize pg dotenv express body-parser morgan faker && 
+npm install sequelize pg express body-parser morgan faker && 
 npm install --save-dev nodemon jest supertest cross-env sequelize-cli && 
 npx sequelize-cli init &&
-echo "
-DEV_DATABASE=express_api_ci_development
-DEV_HOST=127.0.0.1
-TEST_DATABASE=express_api_ci_test
-TEST_HOST=127.0.0.1" >> .env &&
 echo "
 /node_modules
 .DS_Store
@@ -48,40 +43,30 @@ touch server.js  routes/index.js controllers/index.js tests/{base.test.js,routes
 code .
 ```
 
-Rename your config/config.json file to config/config.js and replace the code with this:
+Let's setup our database configuration:
 
+express-api-ci/config/config.json
 ```js
-require('dotenv').config()
-
-module.exports = {
-  development: {
-    database: process.env.DEV_DATABASE,
-    host: process.env.DEV_HOST,
-    dialect: 'postgres'
+{
+  "development": {
+    "database": "express_api_ci_development",
+    "dialect": "postgres"
   },
-  test: {
-    database: process.env.TEST_DATABASE,
-    host: process.env.TEST_HOST,
-    dialect: 'postgres'
+  "test": {
+    "database": "express_api_ci_test",
+    "dialect": "postgres"
   },
-  production: {
-    database: process.env.DATABASE,
-    host: process.env.HOST,
-    dialect: 'postgres'
-  },
+  "production": {
+    "use_env_variable": "DATABASE_URL",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": true
+    }
+  }
 }
 ```
 
-In models/index.js replace 
-
-```js
-const config = require(__dirname + '/../config/config.json')[env];
-``` 
-with: 
-
-```js
-const config = require(__dirname + '/../config/config')[env];
-```
+> Notice: For production we use `use_env_variable` and `DATABASE_URL`. We are going to deploy this app to [Heroku](https://www.heroku.com). Heroku is smart enough to replace `DATABASE_URL` with the production database. You will see this at the end of the lesson.
 
 Create your database, a User model, and run the migration:
 
@@ -538,6 +523,20 @@ touch .coveralls.yml
 
 4. Scroll to the bottom of the coveralls website on your repo page, copy the markdown for the coveralls badge. Paste on line 1 of your readme.
 
+Change your package.json:
+
+```js
+  "scripts": {
+    "test": "cross-env NODE_ENV=test jest  --testTimeout=10000 --detectOpenHandles --forceExit",
+    "pretest": "cross-env NODE_ENV=test npm run db:reset",
+    "db:create:test": "cross-env NODE_ENV=test npx sequelize-cli db:create",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "db:reset": "npx sequelize-cli db:drop && npx sequelize-cli db:create && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
+    "coverage": "npm run db:create:test && npm run pretest && jest --coverage && cat ./coverage/lcov.info | coveralls"
+  },
+```
+
 Finally, you can now push changes up and it will kick off a Travis CI build.
 
 Check for a successful build.
@@ -550,7 +549,9 @@ You will also see your Coveralls badge in your README.md updated.
 
 ![](coveralls-status.png)
 
-Success!
+**Excellent!**
+
+> ✊ **Fist to Five**
 
 ## Feedback
 
