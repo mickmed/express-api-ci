@@ -610,8 +610,8 @@ And watch the Travis build for:
 
 Once the build is complete, test the endpoints on Heroku to confirm: 
 
-- https://express-api-ci-0001.herokuapp.com/api/users
-- https://express-api-ci-0001.herokuapp.com/api/users/1
+- https://your-heroku-app-name.herokuapp.com/api/users
+- https://your-heroku-app-name.herokuapp.com/api/users/1
 
 **Excellent!**
 
