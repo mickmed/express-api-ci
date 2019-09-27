@@ -555,7 +555,7 @@ You will also see your Coveralls badge in your README.md updated.
 
 So we get all the tests to pass. Then what? Well that means the app is ready for production - its ready to deploy. Let's have Travis CI kickoff a Heroku deployment if all tests pass.
 
-Let's install the Travis CI CLI tool:
+Let's install the [Travis CI CLI](https://github.com/travis-ci/travis.rb#readme) tool:
 
 ```sh
 gem install travis -v 1.8.10
