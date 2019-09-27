@@ -87,7 +87,7 @@ Edit the seed file:
 ```js
 const faker = require('faker');
 
-const users = [...Array(100)].map((user) => (
+const users = [...Array(50)].map((user) => (
   {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
@@ -548,6 +548,70 @@ Check for a successful build.
 You will also see your Coveralls badge in your README.md updated.
 
 ![](coveralls-status.png)
+
+##
+
+### Adding Deployment to the Travis CI Build
+
+So we get all the tests to pass. Then what? Well that means the app is ready for production - its ready to deploy. Let's have Travis CI kickoff a Heroku deployment if all tests pass.
+
+Let's install the Travis CI CLI tool:
+
+```sh
+gem install travis -v 1.8.10
+```
+
+We are going to use the Travis CLI to setup our Travis Heroku config:
+
+```sh
+travis setup heroku
+```
+
+> Make sure you encrypt your heroku api key! More info on running heroku commands on travis [here](https://docs.travis-ci.com/user/deployment/heroku/#running-commands)
+
+
+Ok, our .travis.yml file should now look something like this:
+
+```yml
+language: node_js
+node_js:
+- stable
+install: npm install
+services:
+- postgresql
+before_script:
+- npm run db:create:test
+script: npm test
+after_success: npm run coverage
+deploy:
+  provider: heroku
+  api_key:
+    secure: your-heroku-encrypted-api-key
+  app: your-heroku-app-name
+  on:
+    repo: your-github-usernam/your-repo
+  run:
+    - "npx sequelize-cli db:migrate"
+    - "npx sequelize-cli db:seed:all"
+```
+
+```sh
+git status
+git commit -am "add heroku deployment to travis build"
+git push
+```
+
+And watch the Travis build for:
+
+1. Successful tests.
+1. Successful Heroku deployment.
+1. Successful Sequelize migrations on Heroku.
+1. Successful Sequelize seeding on Heroku.
+
+Once the build is complete, test the endpoints on Heroku to confirm: 
+
+- https://express-api-ci-0001.herokuapp.com/api/users
+- https://express-api-ci-0001.herokuapp.com/api/users/1
 
 **Excellent!**
 
