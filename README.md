@@ -285,8 +285,6 @@ const app = require('./app.js');
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log(`Listening on port: ${PORT}`))
-
-module.exports = server
 ```
 
 Create the controllers:
@@ -457,7 +455,7 @@ describe('User API', () => {
 Test it!
 
 ```sh
-npm test
+npm run db:create:test && npm test
 ```
 
 ## Continuous Integration
