@@ -519,7 +519,9 @@ touch .coveralls.yml
 
 3. Click on your repo inside the coveralls website. Copy the repo_token. Paste it inside of .coveralls.yml
 
-4. Scroll to the bottom of the coveralls website on your repo page, copy the markdown for the coveralls badge. Paste on line 1 of your readme.
+4. npm install coveralls
+
+5. Scroll to the bottom of the coveralls website on your repo page, copy the markdown for the coveralls badge. Paste on line 1 of your readme.
 
 Change your package.json:
 
@@ -528,10 +530,11 @@ Change your package.json:
     "test": "cross-env NODE_ENV=test jest  --testTimeout=10000 --detectOpenHandles --forceExit",
     "pretest": "cross-env NODE_ENV=test npm run db:reset",
     "db:create:test": "cross-env NODE_ENV=test npx sequelize-cli db:create",
+    "db:drop:test": "cross-env NODE_ENV=test npx sequelize-cli db:drop",
     "start": "node server.js",
     "dev": "nodemon server.js",
     "db:reset": "npx sequelize-cli db:drop && npx sequelize-cli db:create && npx sequelize-cli db:migrate && npx sequelize-cli db:seed:all",
-    "coverage": "npm run db:create:test && npm run pretest && jest --coverage && cat ./coverage/lcov.info | coveralls"
+    "coverage": "npm run db:drop:test && npm run db:create:test && npm run pretest && jest --coverage && cat ./coverage/lcov.info | coveralls"
   },
 ```
 
