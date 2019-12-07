@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/mickmed/express-api-ci/badge.svg?branch=master)](https://coveralls.io/github/mickmed/express-api-ci?branch=master)
+
 # ![](https://ga-dash.s3.amazonaws.com/production/assets/logo-9f88ae6c9c3871690e33280fcf557f33.png)  SOFTWARE ENGINEERING IMMERSIVE
 
 ## Getting started
